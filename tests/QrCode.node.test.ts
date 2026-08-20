@@ -91,13 +91,20 @@ describe('QR Code node', () => {
 
 		const result = await QrCode.prototype.execute.call(
 			createContext(
-				[{ json: { text: 'bad', requestId: '123' }, binary: { original: { data: 'AA==' } } }],
+				[
+					{
+						json: { text: 'bad', requestId: '123' },
+						binary: { original: { data: 'AA==', mimeType: 'application/octet-stream' } },
+					},
+				],
 				parameters,
 				true,
 			),
 		);
 		expect(result[0][0].json).toEqual({ text: 'bad', requestId: '123', error: expect.stringContaining('must be different') });
-		expect(result[0][0].binary).toEqual({ original: { data: 'AA==' } });
+		expect(result[0][0].binary).toEqual({
+			original: { data: 'AA==', mimeType: 'application/octet-stream' },
+		});
 		expect(result[0][0].pairedItem).toEqual({ item: 0 });
 	});
 });
