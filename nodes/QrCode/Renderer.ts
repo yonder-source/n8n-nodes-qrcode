@@ -104,7 +104,9 @@ export function renderSvg(matrix: QrCodeMatrix, options: RenderOptions): string 
 			}
 			const start = x;
 			while (x < matrix.size && matrix.getModule(x, y)) x++;
-			path.push(`M${start + options.margin} ${y + options.margin}h${x - start}v1H${start + options.margin}z`);
+			path.push(
+				`M${start + options.margin} ${y + options.margin}h${x - start}v1H${start + options.margin}z`,
+			);
 		}
 	}
 

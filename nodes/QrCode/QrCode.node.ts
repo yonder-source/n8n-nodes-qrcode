@@ -138,7 +138,9 @@ export class QrCode implements INodeType {
 				}
 				const format = this.getNodeParameter('format', itemIndex) as OutputFormat;
 				if (!['png', 'svg', 'both'].includes(format)) {
-					throw new NodeOperationError(this.getNode(), 'Format must be PNG, SVG, or Both', { itemIndex });
+					throw new NodeOperationError(this.getNode(), 'Format must be PNG, SVG, or Both', {
+						itemIndex,
+					});
 				}
 
 				const renderOptions: RenderOptions = {
@@ -147,43 +149,79 @@ export class QrCode implements INodeType {
 					foregroundColor: this.getNodeParameter('foregroundColor', itemIndex) as string,
 					backgroundColor: this.getNodeParameter('backgroundColor', itemIndex) as string,
 				};
-				if (!Number.isInteger(renderOptions.size) || renderOptions.size < 64 || renderOptions.size > 4096) {
-					throw new NodeOperationError(this.getNode(), 'Size must be an integer between 64 and 4096', { itemIndex });
+				if (
+					!Number.isInteger(renderOptions.size) ||
+					renderOptions.size < 64 ||
+					renderOptions.size > 4096
+				) {
+					throw new NodeOperationError(
+						this.getNode(),
+						'Size must be an integer between 64 and 4096',
+						{ itemIndex },
+					);
 				}
-				if (!Number.isInteger(renderOptions.margin) || renderOptions.margin < 0 || renderOptions.margin > 16) {
-					throw new NodeOperationError(this.getNode(), 'Margin must be an integer between 0 and 16', { itemIndex });
+				if (
+					!Number.isInteger(renderOptions.margin) ||
+					renderOptions.margin < 0 ||
+					renderOptions.margin > 16
+				) {
+					throw new NodeOperationError(
+						this.getNode(),
+						'Margin must be an integer between 0 and 16',
+						{ itemIndex },
+					);
 				}
 				const level = this.getNodeParameter(
 					'errorCorrectionLevel',
 					itemIndex,
 				) as ErrorCorrectionLevel;
 				if (!['L', 'M', 'Q', 'H'].includes(level)) {
-					throw new NodeOperationError(this.getNode(), 'Invalid error correction level', { itemIndex });
+					throw new NodeOperationError(this.getNode(), 'Invalid error correction level', {
+						itemIndex,
+					});
 				}
 				const matrix = encodeQrCode(text, level);
 				const binary = { ...items[itemIndex].binary };
 
 				const pngProperty =
-					format === 'svg' ? '' : (this.getNodeParameter('pngBinaryProperty', itemIndex) as string).trim();
+					format === 'svg'
+						? ''
+						: (this.getNodeParameter('pngBinaryProperty', itemIndex) as string).trim();
 				const svgProperty =
-					format === 'png' ? '' : (this.getNodeParameter('svgBinaryProperty', itemIndex) as string).trim();
+					format === 'png'
+						? ''
+						: (this.getNodeParameter('svgBinaryProperty', itemIndex) as string).trim();
 				if (!pngProperty.trim() && format !== 'svg') {
-					throw new NodeOperationError(this.getNode(), 'PNG binary property must not be empty', { itemIndex });
+					throw new NodeOperationError(this.getNode(), 'PNG binary property must not be empty', {
+						itemIndex,
+					});
 				}
 				if (!svgProperty.trim() && format !== 'png') {
-					throw new NodeOperationError(this.getNode(), 'SVG binary property must not be empty', { itemIndex });
+					throw new NodeOperationError(this.getNode(), 'SVG binary property must not be empty', {
+						itemIndex,
+					});
 				}
 				if (format === 'both' && pngProperty === svgProperty) {
-					throw new NodeOperationError(this.getNode(), 'PNG and SVG binary properties must be different', { itemIndex });
+					throw new NodeOperationError(
+						this.getNode(),
+						'PNG and SVG binary properties must be different',
+						{ itemIndex },
+					);
 				}
 
 				if (pngProperty) {
 					const fileName = this.getNodeParameter('pngFileName', itemIndex) as string;
 					if (!fileName.trim()) {
-						throw new NodeOperationError(this.getNode(), 'PNG file name must not be empty', { itemIndex });
+						throw new NodeOperationError(this.getNode(), 'PNG file name must not be empty', {
+							itemIndex,
+						});
 					}
 					if (binary[pngProperty]) {
-						throw new NodeOperationError(this.getNode(), `Binary property "${pngProperty}" already exists`, { itemIndex });
+						throw new NodeOperationError(
+							this.getNode(),
+							`Binary property "${pngProperty}" already exists`,
+							{ itemIndex },
+						);
 					}
 					binary[pngProperty] = await this.helpers.prepareBinaryData(
 						renderPng(matrix, renderOptions),
@@ -194,10 +232,16 @@ export class QrCode implements INodeType {
 				if (svgProperty) {
 					const fileName = this.getNodeParameter('svgFileName', itemIndex) as string;
 					if (!fileName.trim()) {
-						throw new NodeOperationError(this.getNode(), 'SVG file name must not be empty', { itemIndex });
+						throw new NodeOperationError(this.getNode(), 'SVG file name must not be empty', {
+							itemIndex,
+						});
 					}
 					if (binary[svgProperty]) {
-						throw new NodeOperationError(this.getNode(), `Binary property "${svgProperty}" already exists`, { itemIndex });
+						throw new NodeOperationError(
+							this.getNode(),
+							`Binary property "${svgProperty}" already exists`,
+							{ itemIndex },
+						);
 					}
 					binary[svgProperty] = await this.helpers.prepareBinaryData(
 						Buffer.from(renderSvg(matrix, renderOptions), 'utf8'),

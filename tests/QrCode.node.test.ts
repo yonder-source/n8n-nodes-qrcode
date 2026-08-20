@@ -69,7 +69,10 @@ describe('QR Code node', () => {
 		await expect(
 			QrCode.prototype.execute.call(
 				createContext([
-					{ json: { text: 'collision' }, binary: { data: { data: 'AA==', mimeType: 'image/png' } } },
+					{
+						json: { text: 'collision' },
+						binary: { data: { data: 'AA==', mimeType: 'image/png' } },
+					},
 				]),
 			),
 		).rejects.toThrow('already exists');
@@ -111,7 +114,11 @@ describe('QR Code node', () => {
 				true,
 			),
 		);
-		expect(result[0][0].json).toEqual({ text: 'bad', requestId: '123', error: expect.stringContaining('must be different') });
+		expect(result[0][0].json).toEqual({
+			text: 'bad',
+			requestId: '123',
+			error: expect.stringContaining('must be different'),
+		});
 		expect(result[0][0].binary).toEqual({
 			original: { data: 'AA==', mimeType: 'application/octet-stream' },
 		});
