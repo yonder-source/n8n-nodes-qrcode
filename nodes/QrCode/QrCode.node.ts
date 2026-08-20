@@ -208,7 +208,8 @@ export class QrCode implements INodeType {
 						: new NodeOperationError(this.getNode(), error as Error, { itemIndex });
 				if (!this.continueOnFail()) throw operationError;
 				returnData.push({
-					json: { error: operationError.message },
+					json: { ...items[itemIndex].json, error: operationError.message },
+					...(items[itemIndex].binary ? { binary: items[itemIndex].binary } : {}),
 					pairedItem: { item: itemIndex },
 				});
 			}

@@ -90,8 +90,14 @@ describe('QR Code node', () => {
 		).rejects.toThrow('must be different');
 
 		const result = await QrCode.prototype.execute.call(
-			createContext([{ json: { text: 'bad' } }], parameters, true),
+			createContext(
+				[{ json: { text: 'bad', requestId: '123' }, binary: { original: { data: 'AA==' } } }],
+				parameters,
+				true,
+			),
 		);
-		expect(result[0][0].json.error).toContain('must be different');
+		expect(result[0][0].json).toEqual({ text: 'bad', requestId: '123', error: expect.stringContaining('must be different') });
+		expect(result[0][0].binary).toEqual({ original: { data: 'AA==' } });
+		expect(result[0][0].pairedItem).toEqual({ item: 0 });
 	});
 });
