@@ -17,32 +17,37 @@
         "type": "git",
         "url": "https://github.com/yonder-source/n8n-nodes-qrcode.git"
     },
-   "scripts": {
-		"build": "n8n-node build",
-		"build:watch": "tsc --watch",
-		"dev": "n8n-node dev",
-		"lint": "n8n-node lint",
-		"lint:fix": "n8n-node lint --fix",
-		"release": "n8n-node release",
-		"prepublishOnly": "n8n-node prerelease"
-	},
+    "scripts": {
+        "build": "n8n-node build",
+        "build:watch": "tsc --watch",
+        "dev": "n8n-node dev",
+        "lint": "n8n-node lint",
+        "lint:fix": "n8n-node lint --fix",
+        "test": "vitest run",
+        "release": "n8n-node release",
+        "prepublishOnly": "n8n-node prerelease"
+    },
     "files": [
-        "dist"
+        "dist/nodes"
     ],
     "n8n": {
         "n8nNodesApiVersion": 1,
         "strict": true,
         "credentials": [],
         "nodes": [
-            "dist/nodes/QrCode.node.js"
+            "dist/nodes/QrCode/QrCode.node.js"
         ]
     },
     "devDependencies": {
         "@n8n/node-cli": "^0.44.3",
+        "@types/pngjs": "^6.0.5",
         "eslint": "9.32.0",
+        "jsqr": "^1.4.0",
+        "pngjs": "^7.0.0",
         "prettier": "3.6.2",
         "release-it": "^19.0.4",
-        "typescript": "5.9.2"
+        "typescript": "5.9.2",
+        "vitest": "^3.2.4"
     },
     "peerDependencies": {
         "n8n-workflow": "*"
