@@ -99,6 +99,7 @@ export class QrCode implements INodeType {
 				displayName: 'Error Correction Level',
 				name: 'errorCorrectionLevel',
 				type: 'options',
+				description: 'Higher levels improve damage recovery but reduce data capacity',
 				options: [
 					{ name: 'Low (L)', value: 'L' },
 					{ name: 'Medium (M)', value: 'M' },
