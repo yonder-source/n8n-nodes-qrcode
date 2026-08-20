@@ -138,7 +138,7 @@ function createPngChunk(type: string, data: Buffer): Buffer {
 	chunk.writeUInt32BE(data.length, 0);
 	typeBuffer.copy(chunk, 4);
 	data.copy(chunk, 8);
-	chunk.writeUInt32BE(crc32(Buffer.concat([typeBuffer, data])), data.length + 8);
+	chunk.writeUInt32BE(crc32(chunk.subarray(4, data.length + 8)), data.length + 8);
 	return chunk;
 }
 
