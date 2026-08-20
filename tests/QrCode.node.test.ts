@@ -83,7 +83,11 @@ describe('QR Code node', () => {
 
 	it('outputs PNG and SVG to separate binary properties', async () => {
 		const result = await QrCode.prototype.execute.call(
-			createContext([{ json: { text: 'both' } }], { format: 'both' }),
+			createContext([{ json: { text: 'both' } }], {
+				format: 'both',
+				pngBinaryProperty: ' data ',
+				svgBinaryProperty: ' svg ',
+			}),
 		);
 		expect(result[0][0].binary?.data.mimeType).toBe('image/png');
 		expect(result[0][0].binary?.svg.mimeType).toBe('image/svg+xml');

@@ -163,8 +163,10 @@ export class QrCode implements INodeType {
 				const matrix = encodeQrCode(text, level);
 				const binary = { ...items[itemIndex].binary };
 
-				const pngProperty = format === 'svg' ? '' : (this.getNodeParameter('pngBinaryProperty', itemIndex) as string);
-				const svgProperty = format === 'png' ? '' : (this.getNodeParameter('svgBinaryProperty', itemIndex) as string);
+				const pngProperty =
+					format === 'svg' ? '' : (this.getNodeParameter('pngBinaryProperty', itemIndex) as string).trim();
+				const svgProperty =
+					format === 'png' ? '' : (this.getNodeParameter('svgBinaryProperty', itemIndex) as string).trim();
 				if (!pngProperty.trim() && format !== 'svg') {
 					throw new NodeOperationError(this.getNode(), 'PNG binary property must not be empty', { itemIndex });
 				}
