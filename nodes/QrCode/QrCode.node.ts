@@ -129,11 +129,14 @@ export class QrCode implements INodeType {
 
 		for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
 			try {
-				const text = this.getNodeParameter('text', itemIndex) as string;
-				const format = this.getNodeParameter('format', itemIndex) as OutputFormat;
+				const text = this.getNodeParameter('text', itemIndex);
+				if (typeof text !== 'string') {
+					throw new NodeOperationError(this.getNode(), 'Text must be a string', { itemIndex });
+				}
 				if (text.length === 0) {
 					throw new NodeOperationError(this.getNode(), 'Text must not be empty', { itemIndex });
 				}
+				const format = this.getNodeParameter('format', itemIndex) as OutputFormat;
 				if (!['png', 'svg', 'both'].includes(format)) {
 					throw new NodeOperationError(this.getNode(), 'Format must be PNG, SVG, or Both', { itemIndex });
 				}

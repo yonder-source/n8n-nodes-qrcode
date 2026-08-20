@@ -75,6 +75,12 @@ describe('QR Code node', () => {
 		).rejects.toThrow('already exists');
 	});
 
+	it('rejects non-string text values', async () => {
+		await expect(
+			QrCode.prototype.execute.call(createContext([{ json: { text: 'ignored' } }], { text: 123 })),
+		).rejects.toThrow('Text must be a string');
+	});
+
 	it('outputs PNG and SVG to separate binary properties', async () => {
 		const result = await QrCode.prototype.execute.call(
 			createContext([{ json: { text: 'both' } }], { format: 'both' }),
