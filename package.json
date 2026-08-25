@@ -1,6 +1,6 @@
 {
     "name": "@yonder-source/n8n-nodes-qrcode",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "description": "n8n community node for generating QR codes without external runtime dependencies.",
     "license": "MIT",
     "homepage": "https://github.com/yonder-source/n8n-nodes-qrcode#readme",
