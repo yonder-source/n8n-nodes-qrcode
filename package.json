@@ -1,58 +1,58 @@
 {
-    "name": "@yonder-source/n8n-nodes-qrcode",
-    "version": "0.1.2",
-    "description": "n8n community node for generating QR codes without external runtime dependencies.",
-    "license": "MIT",
-    "homepage": "https://github.com/yonder-source/n8n-nodes-qrcode#readme",
-    "keywords": [
-        "n8n-community-node-package",
-        "qrcode",
-        "qr-code"
-    ],
-    "author": {
-        "name": "victor.tseng",
-        "email": "victor.tseng@yondersource.com"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/yonder-source/n8n-nodes-qrcode.git"
-    },
-    "scripts": {
-        "build": "n8n-node build",
-        "build:watch": "tsc --watch",
-        "dev": "n8n-node dev",
-        "lint": "n8n-node lint",
-        "lint:fix": "n8n-node lint --fix",
-        "test": "vitest run",
-        "release": "n8n-node release",
-        "prepublishOnly": "n8n-node prerelease"
-    },
-    "files": [
-        "dist/nodes"
-    ],
-    "publishConfig": {
-        "access": "public"
-    },
-    "n8n": {
-        "n8nNodesApiVersion": 1,
-        "strict": true,
-        "credentials": [],
-        "nodes": [
-            "dist/nodes/QrCode/QrCode.node.js"
-        ]
-    },
-    "devDependencies": {
-        "@n8n/node-cli": "^0.44.3",
-        "@types/pngjs": "^6.0.5",
-        "eslint": "9.32.0",
-        "jsqr": "^1.4.0",
-        "pngjs": "^7.0.0",
-        "prettier": "3.9.6",
-        "release-it": "20.2.0",
-        "typescript": "5.9.2",
-        "vitest": "^4.1.10"
-    },
-    "peerDependencies": {
-        "n8n-workflow": "*"
-    }
+	"name": "@yonder-source/n8n-nodes-qrcode",
+	"version": "0.1.2",
+	"description": "n8n community node for generating QR codes without external runtime dependencies.",
+	"license": "MIT",
+	"homepage": "https://github.com/yonder-source/n8n-nodes-qrcode#readme",
+	"keywords": [
+		"n8n-community-node-package",
+		"qrcode",
+		"qr-code"
+	],
+	"author": {
+		"name": "victor.tseng",
+		"email": "victor.tseng@yondersource.com"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/yonder-source/n8n-nodes-qrcode.git"
+	},
+	"scripts": {
+		"build": "n8n-node build",
+		"build:watch": "tsc --watch",
+		"dev": "n8n-node dev",
+		"lint": "n8n-node lint",
+		"lint:fix": "n8n-node lint --fix",
+		"test": "vitest run",
+		"release": "n8n-node release",
+		"prepublishOnly": "n8n-node prerelease"
+	},
+	"files": [
+		"dist"
+	],
+	"publishConfig": {
+		"access": "public"
+	},
+	"n8n": {
+		"n8nNodesApiVersion": 1,
+		"strict": true,
+		"credentials": [],
+		"nodes": [
+			"dist/nodes/QrCode/QrCode.node.js"
+		]
+	},
+	"devDependencies": {
+		"@n8n/node-cli": "^0.44.3",
+		"@types/pngjs": "^6.0.5",
+		"eslint": "9.32.0",
+		"jsqr": "^1.4.0",
+		"pngjs": "^7.0.0",
+		"prettier": "3.9.6",
+		"release-it": "20.2.0",
+		"typescript": "5.9.2",
+		"vitest": "^4.1.10"
+	},
+	"peerDependencies": {
+		"n8n-workflow": "*"
+	}
 }
