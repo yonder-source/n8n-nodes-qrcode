@@ -44,7 +44,7 @@
 	"devDependencies": {
 		"@n8n/node-cli": "^0.44.3",
 		"@types/pngjs": "^6.0.5",
-		"eslint": "9.32.0",
+		"eslint": "10.9.1",
 		"jsqr": "^1.4.0",
 		"pngjs": "^7.0.0",
 		"prettier": "3.9.6",
