@@ -42,7 +42,7 @@
 		]
 	},
 	"devDependencies": {
-		"@n8n/node-cli": "^0.44.3",
+		"@n8n/node-cli": "^0.45.3",
 		"@types/pngjs": "^6.0.5",
 		"eslint": "9.32.0",
 		"jsqr": "^1.4.0",
