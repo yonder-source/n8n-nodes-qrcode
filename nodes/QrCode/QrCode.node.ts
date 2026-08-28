@@ -22,6 +22,7 @@ export class QrCode implements INodeType {
 		group: ['transform'],
 		version: 1,
 		description: 'Generate QR Code images from text',
+		documentationUrl: 'https://github.com/yonder-source/n8n-nodes-qrcode/blob/main/docs/usage.md',
 		subtitle: '={{$parameter["format"]}}',
 		defaults: { name: 'QR Code' },
 		inputs: [NodeConnectionTypes.Main],
