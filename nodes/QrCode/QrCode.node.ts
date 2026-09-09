@@ -1,6 +1,7 @@
 import {
 	NodeConnectionTypes,
 	NodeOperationError,
+	type IDataObject,
 	type IExecuteFunctions,
 	type INodeExecutionData,
 	type INodeType,
@@ -12,8 +13,6 @@ import { renderPng, renderSvg, type RenderOptions } from './Renderer';
 
 type OutputFormat = 'png' | 'svg' | 'both';
 
-// Binary-producing nodes cannot be used as AI tools.
-// eslint-disable-next-line @n8n/community-nodes/node-usable-as-tool
 export class QrCode implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'QR Code',
@@ -22,6 +21,12 @@ export class QrCode implements INodeType {
 		group: ['transform'],
 		version: 1,
 		description: 'Generate QR Code images from text',
+		usableAsTool: {
+			replacements: {
+				description:
+					'Generate QR Code image. Set Output QR Code in JSON to true so the generated QR code is available in the output JSON under qrCode (PNG as base64, SVG as text).',
+			},
+		},
 		documentationUrl: 'https://github.com/yonder-source/n8n-nodes-qrcode/blob/main/docs/usage.md',
 		subtitle: '={{$parameter["format"]}}',
 		defaults: { name: 'QR Code' },
@@ -81,6 +86,14 @@ export class QrCode implements INodeType {
 				displayOptions: { show: { format: ['svg', 'both'] } },
 			},
 			{
+				displayName: 'Output QR Code in JSON',
+				name: 'outputQrCodeInJson',
+				type: 'boolean',
+				default: false,
+				description:
+					'Whether to output generated QR code in the output JSON for direct AI Agent consumption (PNG as base64, SVG as text). Leave it off for standard binary workflow output.',
+			},
+			{
 				displayName: 'Size',
 				name: 'size',
 				type: 'number',
@@ -126,6 +139,7 @@ export class QrCode implements INodeType {
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
+		const isToolExecution = this.isToolExecution();
 		const returnData: INodeExecutionData[] = [];
 
 		for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
@@ -183,6 +197,11 @@ export class QrCode implements INodeType {
 				}
 				const matrix = encodeQrCode(text, level);
 				const binary = { ...items[itemIndex].binary };
+				const outputQrCodeInJson = this.getNodeParameter(
+					'outputQrCodeInJson',
+					itemIndex,
+				) as boolean;
+				const qrCode: IDataObject = {};
 
 				const pngProperty =
 					format === 'svg'
@@ -224,11 +243,15 @@ export class QrCode implements INodeType {
 							{ itemIndex },
 						);
 					}
-					binary[pngProperty] = await this.helpers.prepareBinaryData(
-						renderPng(matrix, renderOptions),
-						fileName,
-						'image/png',
-					);
+					const pngData = renderPng(matrix, renderOptions);
+					if (!isToolExecution) {
+						binary[pngProperty] = await this.helpers.prepareBinaryData(
+							pngData,
+							fileName,
+							'image/png',
+						);
+					}
+					if (outputQrCodeInJson) qrCode.png = pngData.toString('base64');
 				}
 				if (svgProperty) {
 					const fileName = this.getNodeParameter('svgFileName', itemIndex) as string;
@@ -244,20 +267,34 @@ export class QrCode implements INodeType {
 							{ itemIndex },
 						);
 					}
-					binary[svgProperty] = await this.helpers.prepareBinaryData(
-						Buffer.from(renderSvg(matrix, renderOptions), 'utf8'),
-						fileName,
-						'image/svg+xml',
-					);
+					const svgData = renderSvg(matrix, renderOptions);
+					if (!isToolExecution) {
+						binary[svgProperty] = await this.helpers.prepareBinaryData(
+							Buffer.from(svgData, 'utf8'),
+							fileName,
+							'image/svg+xml',
+						);
+					}
+					if (outputQrCodeInJson) qrCode.svg = svgData;
 				}
 
-				returnData.push({ json: items[itemIndex].json, binary, pairedItem: { item: itemIndex } });
+				returnData.push({
+					json: outputQrCodeInJson
+						? {
+								...items[itemIndex].json,
+								qrCode: format === 'both' ? qrCode : qrCode[format],
+							}
+						: items[itemIndex].json,
+					...(Object.keys(binary).length > 0 ? { binary } : {}),
+					pairedItem: { item: itemIndex },
+				});
 			} catch (error) {
 				const operationError =
 					error instanceof NodeOperationError
 						? error
 						: new NodeOperationError(this.getNode(), error as Error, { itemIndex });
 				if (!this.continueOnFail()) throw operationError;
+
 				returnData.push({
 					json: { ...items[itemIndex].json, error: operationError.message },
 					...(items[itemIndex].binary ? { binary: items[itemIndex].binary } : {}),

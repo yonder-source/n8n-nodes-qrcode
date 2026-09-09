@@ -15,12 +15,14 @@ const defaults: Record<string, unknown> = {
 	errorCorrectionLevel: 'M',
 	foregroundColor: '#000000',
 	backgroundColor: '#ffffff',
+	outputQrCodeInJson: false,
 };
 
 function createContext(
 	items: INodeExecutionData[],
 	parameters: Record<string, unknown> = {},
 	continueOnFail = false,
+	isToolExecution = false,
 ): IExecuteFunctions {
 	return {
 		getInputData: () => items,
@@ -37,6 +39,7 @@ function createContext(
 			parameters: {},
 		}),
 		continueOnFail: () => continueOnFail,
+		isToolExecution: () => isToolExecution,
 		helpers: {
 			prepareBinaryData: async (buffer: Buffer, fileName?: string, mimeType?: string) => ({
 				data: buffer.toString('base64'),
@@ -94,6 +97,57 @@ describe('QR Code node', () => {
 		);
 		expect(result[0][0].binary?.data.mimeType).toBe('image/png');
 		expect(result[0][0].binary?.svg.mimeType).toBe('image/svg+xml');
+	});
+
+	it('also outputs PNG as base64 in JSON when requested', async () => {
+		const result = await QrCode.prototype.execute.call(
+			createContext([{ json: { text: 'tool' } }], { outputQrCodeInJson: true }),
+		);
+
+		expect(typeof result[0][0].json.qrCode).toBe('string');
+		expect(result[0][0].json.qrCode).toBe(result[0][0].binary?.data.data);
+		expect(result[0][0].binary?.data.mimeType).toBe('image/png');
+	});
+
+	it('does not generate binary output during tool execution', async () => {
+		const result = await QrCode.prototype.execute.call(
+			createContext([{ json: { text: 'tool' } }], { outputQrCodeInJson: true }, false, true),
+		);
+
+		expect(result[0][0].json.qrCode).toEqual(expect.any(String));
+		expect(result[0][0].binary).toBeUndefined();
+	});
+
+	it('also outputs SVG as text in JSON when requested', async () => {
+		const result = await QrCode.prototype.execute.call(
+			createContext([{ json: { text: 'tool' } }], { format: 'svg', outputQrCodeInJson: true }),
+		);
+
+		expect(result[0][0].json.qrCode).toBe(
+			Buffer.from(result[0][0].binary?.svg.data ?? '', 'base64').toString('utf8'),
+		);
+		expect(result[0][0].json.qrCode).toMatch(/<svg /);
+	});
+
+	it('outputs both formats in JSON without changing the input item', async () => {
+		const items: INodeExecutionData[] = [{ json: { text: 'both', requestId: '123' } }];
+		const result = await QrCode.prototype.execute.call(
+			createContext(items, { format: 'both', outputQrCodeInJson: true }),
+		);
+		const output = result[0][0];
+
+		expect(output.json).toEqual({
+			text: 'both',
+			requestId: '123',
+			qrCode: {
+				png: output.binary?.data.data,
+				svg: Buffer.from(output.binary?.svg.data ?? '', 'base64').toString('utf8'),
+			},
+		});
+		expect(output.binary?.data.mimeType).toBe('image/png');
+		expect(output.binary?.svg.mimeType).toBe('image/svg+xml');
+		expect(output.pairedItem).toEqual({ item: 0 });
+		expect(items[0].json).toEqual({ text: 'both', requestId: '123' });
 	});
 
 	it('rejects colliding properties and supports continue on fail', async () => {

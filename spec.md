@@ -15,19 +15,20 @@ runtime third-party dependencies.
 
 ### Parameters
 
-| Parameter | Default | Validation |
-| --- | --- | --- |
-| Text | Empty | Required and non-empty; expressions supported |
-| Format | PNG | PNG, SVG, or Both |
-| PNG binary property | `data` | Required for PNG/Both |
-| PNG file name | `qrcode.png` | Required for PNG/Both; expressions supported |
-| SVG binary property | `svg` | Required for SVG/Both |
-| SVG file name | `qrcode.svg` | Required for SVG/Both; expressions supported |
-| Size | 512 | Integer from 64 through 4096 pixels |
-| Margin | 4 | Integer from 0 through 16 modules |
-| Error correction | M | L, M, Q, or H |
-| Foreground | `#000000` | `#RRGGBB`, different from background |
-| Background | `#ffffff` | `#RRGGBB`, different from foreground |
+| Parameter              | Default      | Validation                                                                      |
+| ---------------------- | ------------ | ------------------------------------------------------------------------------- |
+| Text                   | Empty        | Required and non-empty; expressions supported                                   |
+| Format                 | PNG          | PNG, SVG, or Both                                                               |
+| PNG binary property    | `data`       | Required for PNG/Both                                                           |
+| PNG file name          | `qrcode.png` | Required for PNG/Both; expressions supported                                    |
+| SVG binary property    | `svg`        | Required for SVG/Both                                                           |
+| SVG file name          | `qrcode.svg` | Required for SVG/Both; expressions supported                                    |
+| Output QR Code in JSON | `false`      | When enabled, add generated PNG as base64 or SVG as text under `qrCode` in JSON |
+| Size                   | 512          | Integer from 64 through 4096 pixels                                             |
+| Margin                 | 4            | Integer from 0 through 16 modules                                               |
+| Error correction       | M            | L, M, Q, or H                                                                   |
+| Foreground             | `#000000`    | `#RRGGBB`, different from background                                            |
+| Background             | `#ffffff`    | `#RRGGBB`, different from foreground                                            |
 
 PNG output uses indexed one-bit pixels and a standards-compliant PNG/zlib
 stream. SVG output uses a compact path and crisp-edge rendering. Raster size
