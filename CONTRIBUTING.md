@@ -16,7 +16,7 @@ Thank you for contributing to `@yonder-source/n8n-nodes-qrcode`.
 
 Requirements:
 
-- Node.js 22.22 or newer
+- Node.js 24 or newer
 - npm
 
 Install dependencies and run the project checks:
